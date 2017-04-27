@@ -23,10 +23,20 @@ sigma = 0.3;
 %        mean(double(predictions ~= yval))
 %
 
-
-
-
-
+min_train_error = intmax('int64');
+vals = [0.01, 0.03, 0.1, 0.3, 1, 3, 10, 30];
+for i=1:length(vals),
+    for j=1:length(vals),
+        predictions = svmPredict(svmTrain(X, y, vals(i), ...
+            @(X1,X2)gaussianKernel(X1,X2,vals(j))), Xval);
+        train_error = mean(double(predictions ~= yval));
+        if train_error < min_train_error,
+            C = vals(i);
+            sigma = vals(j);
+            min_train_error = train_error;
+        end;
+    end;
+end;
 
 
 % =========================================================================
